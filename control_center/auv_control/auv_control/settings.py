@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 import envitro
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,7 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'channels'
+    'channels',
+    'auv',
+    'navigation',
+    'remote_control',
+    'utils',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -72,18 +77,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'auv_control.wsgi.application'
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
+        "ROUTING": "auv_control.routing.channel_routing",
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': envitro.str('DB_NAME'),
-        'USER': envitro.str('DB_USER'),
-        'HOST': 'db',
-        'PORT': 5432,
-    }
+    'default': dj_database_url.config()
 }
 
 # Password validation
