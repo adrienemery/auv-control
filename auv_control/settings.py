@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'auv',
     'navigation',
     'remote_control',
-    'utils',
 ]
 
 MIDDLEWARE_CLASSES = [
