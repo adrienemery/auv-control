@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = envitro.str('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = envitro.bool('DEBUG')
+DEBUG = envitro.bool('DEBUG', False)
 
 ALLOWED_HOSTS = ['*']
 
@@ -81,7 +81,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "asgi_redis.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("localhost", 6379)],
+            "hosts": [envitro.str('REDIS_URL', 'redis://localhost:6379')],
         },
         "ROUTING": "auv_control.routing.channel_routing",
     },

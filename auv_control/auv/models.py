@@ -36,7 +36,6 @@ class AUVData(BaseModel):
     # enviornmental data
     temperature = models.FloatField(blank=True, null=True)
 
-    photo = models.ImageField(blank=True, null=True)
     timestamp = models.DateTimeField(blank=True, null=True)
 
     @classmethod

@@ -1,7 +1,0 @@
-asgi-redis>-0.14.0
-channels>=0.17.1
-Django==1.10.0
-djangorestframework==3.4.1
-envitro>=0.4.2
-ipython==5.0.0
-psycopg2==2.6.2
