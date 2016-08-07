@@ -91,4 +91,5 @@ ENV/
 # Pycharm project settings
 */.idea/*
 .idea/*
+staticfiles
 
