@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from utils.models import BaseModel
 
@@ -5,6 +6,7 @@ from utils.models import BaseModel
 class AUV(BaseModel):
     """Primary model representing a single AUV
     """
+    owner = models.ForeignKey(User, blank=True, null=True)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     serial_number = models.CharField(max_length=50, unique=True)

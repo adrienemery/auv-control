@@ -29,4 +29,3 @@ def log_data(message):
     auv = AUV.objects.get(address=address)
     data = message.get('data')
     AUVData.log(auv, **data)
-
