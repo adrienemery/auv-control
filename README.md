@@ -1,3 +1,3 @@
-# auv-control
+# auv-control-database
 
-Control Software for AUV's.
+This is main API code for managing AUV's, planning trips, logging data.
