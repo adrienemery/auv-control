@@ -21,6 +21,8 @@ from .views import Status
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^status/', Status.as_view()),
+    url(r'^api/auth/', include('knox.urls')),
+    url(r'^api/auth/', include('authenticator.urls')),
     url(r'^api/', include('auv.urls')),
     url(r'^api/', include('navigation.urls')),
 ]

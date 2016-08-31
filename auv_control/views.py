@@ -15,3 +15,4 @@ class Status(APIView):
         """
         return Response(status=status.HTTP_200_OK,
                         data={'status': 'ok'})
+
