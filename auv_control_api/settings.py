@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'knox',
     'authenticator',
@@ -50,16 +51,16 @@ INSTALLED_APPS = [
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
-ROOT_URLCONF = 'auv_control.urls'
+ROOT_URLCONF = 'auv_control_api.urls'
 
 TEMPLATES = [
     {
@@ -77,7 +78,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'auv_control.wsgi.application'
+WSGI_APPLICATION = 'auv_control_api.wsgi.application'
 
 CHANNEL_LAYERS = {
     "default": {
@@ -85,7 +86,7 @@ CHANNEL_LAYERS = {
         "CONFIG": {
             "hosts": [envitro.str('REDIS_URL', 'redis://localhost:6379')],
         },
-        "ROUTING": "auv_control.routing.channel_routing",
+        "ROUTING": "auv_control_api.routing.channel_routing",
     },
 }
 
@@ -143,6 +144,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'knox.auth.TokenAuthentication',
+    )
 }
 
 
@@ -153,3 +158,6 @@ REST_KNOX = {
   'TOKEN_TTL': None,
   'USER_SERIALIZER': 'knox.serializers.UserSerializer',
 }
+
+# allow all CORS for now
+CORS_ORIGIN_ALLOW_ALL = True

@@ -1,5 +1,8 @@
 from rest_framework import viewsets, mixins, permissions, exceptions
+
 from auv.models import AUV
+
+from .serializers import TripSerializer
 from .models import Trip, Waypoint, Location
 
 
@@ -19,6 +22,8 @@ class AUVViewSetMixin:
 
 class TripViewSet(AUVViewSetMixin,
                   viewsets.ModelViewSet):
+
+    serializer_class = TripSerializer
 
     def get_queryset(self):
         auv = self.get_auv()
