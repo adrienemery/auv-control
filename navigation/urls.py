@@ -13,6 +13,7 @@ auv_router.register(r'locations', LocationViewSet, base_name='locations')
 trip_router = routers.NestedSimpleRouter(auv_router, r'trips', lookup='trip')
 # api/auvs/{auv_pk}/trips/{trip_pk}/waypoints
 trip_router.register(r'waypoints', WayPointViewSet, base_name='waypoints')
+# api/auvs/{auv_pk}/trips/{trip_pk}/locations
 trip_router.register(r'locations', LocationViewSet, base_name='trip-locations')
 
 

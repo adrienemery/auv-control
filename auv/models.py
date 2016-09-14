@@ -10,9 +10,11 @@ class AUV(BaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     serial_number = models.CharField(max_length=50, unique=True)
-    address = models.CharField(max_length=50, unique=True)  # human and machine readable ie. auv.one
+    # human and machine readable address ie. auv.one
+    address = models.CharField(max_length=50, unique=True)
     last_seen = models.DateTimeField(blank=True, null=True,
-                                     help_text='updated whenever a heartbeat is recieved')
+                                     help_text='updated whenever a '
+                                               'heartbeat is recieved')
     max_depth = models.FloatField(blank=True, null=True)  # [m]
     max_speed = models.FloatField(blank=True, null=True)  # [m/s]
     max_time_underwater = models.FloatField(blank=True, null=True)  # [ms]
@@ -39,6 +41,9 @@ class AUVData(BaseModel):
     temperature = models.FloatField(blank=True, null=True)
 
     timestamp = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        ordering = ('-created',)  # TODO order by timestamp if needed
 
     @classmethod
     def log(cls, auv, **data):
