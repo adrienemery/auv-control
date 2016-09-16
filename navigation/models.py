@@ -17,12 +17,13 @@ class Waypoint(BaseModel):
 
     Multiple waypoints define a trip.
     """
-    trip = models.ForeignKey(Trip, blank=True, null=True)
+    trip = models.ForeignKey(Trip, blank=True, null=True,
+                             related_name='waypoints')
     # trips with multiple waypoints must have an order to know which order
     # to move between the waypoints
     order = models.IntegerField(null=True, blank=True)
     lat = models.FloatField(null=True, blank=True)
-    lon = models.FloatField(null=True, blank=True)
+    lng = models.FloatField(null=True, blank=True)
 
 
 class Location(BaseModel):

@@ -1,23 +1,8 @@
-from rest_framework import viewsets, mixins, permissions, exceptions
+from rest_framework import viewsets, mixins
+from auv.views import AUVViewSetMixin
 
-from auv.models import AUV
-
-from .serializers import TripSerializer
+from .serializers import TripSerializer, WaypointSerializer
 from .models import Trip, Waypoint, Location
-
-
-class AUVViewSetMixin:
-
-    def get_auv(self):
-        user = self.request.user
-        auv_pk = self.kwargs.get('auv_pk')
-        try:
-            return AUV.objects.get(pk=auv_pk, owner=user.pk)
-        except AUV.DoesNotExist:
-            raise exceptions.NotFound()
-
-    def check_auv_exists(self):
-        self.get_auv()
 
 
 class TripViewSet(AUVViewSetMixin,
@@ -32,6 +17,8 @@ class TripViewSet(AUVViewSetMixin,
 
 class WayPointViewSet(AUVViewSetMixin,
                       viewsets.ModelViewSet):
+
+    serializer_class = WaypointSerializer
 
     def get_queryset(self):
         self.check_auv_exists()
@@ -49,4 +36,3 @@ class LocationViewSet(AUVViewSetMixin,
         if trip_pk:
             queryset.filter(trip_pk='trip_pk')
         return queryset
-
