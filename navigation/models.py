@@ -11,6 +11,9 @@ class Trip(BaseModel):
     # only one trip can be active at a time
     active = models.BooleanField(blank=True, default=False)
 
+    def __str__(self):
+        return self.name
+
 
 class Waypoint(BaseModel):
     """Basicaly a Latitite and Longitude
@@ -24,6 +27,9 @@ class Waypoint(BaseModel):
     order = models.IntegerField(null=True, blank=True)
     lat = models.FloatField(null=True, blank=True)
     lng = models.FloatField(null=True, blank=True)
+
+    def str(self):
+        return '{}, {}'.format(self.lat, self.lng)
 
 
 class Location(BaseModel):

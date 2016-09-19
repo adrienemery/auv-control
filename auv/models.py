@@ -19,6 +19,9 @@ class AUV(BaseModel):
     max_speed = models.FloatField(blank=True, null=True)  # [m/s]
     max_time_underwater = models.FloatField(blank=True, null=True)  # [ms]
 
+    def __str__(self):
+        return self.name
+
 
 class AUVData(BaseModel):
     """A log of all sensor data
