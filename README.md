@@ -4,6 +4,11 @@ This is main API code for managing AUV's, planning trips, logging data.
 
 ## Development
 
+### Install Dependencies
+```bash
+$ pip install -r requirements.tx
+```
+
 ### Setup enviornment variables
 
 ```bash
