@@ -80,15 +80,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'auv_control_api.wsgi.application'
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "asgi_redis.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [envitro.str('REDIS_URL', 'redis://localhost:6379')],
-        },
-        "ROUTING": "auv_control_api.routing.channel_routing",
-    },
-}
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases

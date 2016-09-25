@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+  db:
+    image: postgres
+
+  web:
+    environment:
+      - DEBUG=True
+      - DATABASE_URL=postgres://postgres@db:5432/postgres
+      - SECRET_KEY=&_x8zn)ca^!#h!jt_pi9eo9y3p!evh9(_y9$=3t@7r2jh+g2!#'
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    restart: always
+    volumes:
+      # Mount the app dir in the container as /src so our changes to the app code
+      # are also changed in the container
+      - .:/code
