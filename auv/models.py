@@ -18,6 +18,8 @@ class AUV(BaseModel):
     max_depth = models.FloatField(blank=True, null=True)  # [m]
     max_speed = models.FloatField(blank=True, null=True)  # [m/s]
     max_time_underwater = models.FloatField(blank=True, null=True)  # [ms]
+    update_frequency = models.FloatField(blank=True, null=True,
+                                         help_text='Update frequency in [Hz]')
 
     def __str__(self):
         return self.name
