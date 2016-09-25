@@ -15,6 +15,13 @@ $ docker-compose up
 
 ### Without Docker
 
+#### Install Dependencies
+```bash
+$ pip install -r requirements.tx
+```
+
+#### Setup enviornment variables
+
 ```bash
 $ export DEBUG=True
 $ export DATABASE_URL=postgres://USER:PASSWORD@HOST:PORT/NAME`
@@ -24,22 +31,22 @@ $ export SECRET_KEY=somethingsecret
 For other database backends see: 
 https://github.com/kennethreitz/dj-database-url
 
-### Run migrations
+#### Run migrations
 ```bash
 $ python manage.py migrate
 ```
 
-### Create Superuser
+#### Create Superuser
 ```bash
 $ python manage.py createsuperuser
 ```
 
-### Run Development Server
+#### Run Development Server
 ```bash
 $ python manage.py runserver
 ```
 
-### Create AUV
+#### Create AUV
 Go to `localhost:8000/admin` and create an AUV for testing with the Frontend.
 
 
