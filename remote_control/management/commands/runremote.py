@@ -1,10 +1,13 @@
 import configparser
 import logging
+import txaio
+
+txaio.use_asyncio()
 
 from django.core.management.base import BaseCommand
+
 from remote_control.remote_control import RemoteInterface, ApplicationRunner
 from autobahn_autoreconnect import BackoffStrategy
-
 
 logging.basicConfig(level=logging.INFO)
 

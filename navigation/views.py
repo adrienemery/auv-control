@@ -1,4 +1,7 @@
-from rest_framework import viewsets, mixins
+from channels import Channel
+from rest_framework import viewsets
+from rest_framework.decorators import detail_route
+
 from auv.views import AUVViewSetMixin
 
 from .serializers import TripSerializer, WaypointSerializer
@@ -13,6 +16,17 @@ class TripViewSet(AUVViewSetMixin,
     def get_queryset(self):
         auv = self.get_auv()
         return Trip.objects.filter(auv=auv)
+
+    @detail_route(methods=['post'])
+    def select(self, request, pk=None, **kwargs):
+        trip = self.get_object()
+        waypoints = trip.waypoints.all()
+        data = WaypointSerializer(waypoints, many=True).data
+        content = {
+            'rpc': 'com.auv.set_trip',
+            'data': data
+        }
+        Channel('auv.send').send(content)
 
 
 class WayPointViewSet(AUVViewSetMixin,

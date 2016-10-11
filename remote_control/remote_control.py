@@ -1,14 +1,17 @@
+import asyncio
 import logging
 
-from django.utils import timezone
-from knox.auth import AuthToken
-from django.contrib.auth.models import User
 from autobahn.asyncio.wamp import ApplicationSession
 from autobahn_autoreconnect import ApplicationRunner
+
+from django.contrib.auth.models import User
+from django.utils import timezone
+from knox.auth import AuthToken
 from rest_framework import exceptions
 
-from auv.serializers import AUVDataSerializer
+from auv_control_api.asgi import channel_layer, AUV_SEND_CHANNEL
 from auv.models import AUV
+from auv.serializers import AUVDataSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +43,19 @@ class RemoteInterface(ApplicationSession):
         logger.info("Joined Crossbar Session")
         await self.subscribe(self._handle_auv_connected, 'com.auv.connected')
         await self.subscribe(self._handle_auv_connected, 'com.auv.update')
+        loop = asyncio.get_event_loop()
+        asyncio.ensure_future(self._route_rpc_calls(), loop=loop)
+
+    async def _route_rpc_calls(self):
+        """Read messages off of the `auv.send` channel"""
+        while True:
+            _, data = channel_layer.receive_many([AUV_SEND_CHANNEL])
+            if data:
+                # if there is an `rpc` method defined we will
+                # call it and pass in any `data` args
+                if data.get('rpc'):
+                    self.call(data.get('rpc'), data.get('data'))
+            asyncio.sleep(0.1)
 
     def _handle_auv_update(self, data):
         """Log data to database"""

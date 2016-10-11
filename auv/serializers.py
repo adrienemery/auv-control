@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
-from .models import AUV, AUVData
 from navigation.models import Trip
 from navigation.serializers import TripSerializer
+from .models import AUV, AUVData
 
 
 class AUVSerializer(serializers.ModelSerializer):
