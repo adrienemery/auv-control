@@ -9,9 +9,12 @@ from django.utils import timezone
 from knox.auth import AuthToken
 from rest_framework import exceptions
 
-from auv_control_api.asgi import channel_layer, AUV_SEND_CHANNEL
+from auv_control_api.asgi import channel_layer
+from auv_control_api.constants import WAMP_RPC_CHANNEL, WAMP_PUBLISH_CHANNEL
 from auv.models import AUV
 from auv.serializers import AUVDataSerializer
+from navigation.models import Trip
+from navigation.serializers import TripSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -44,21 +47,34 @@ class RemoteInterface(ApplicationSession):
         await self.subscribe(self._handle_auv_connected, 'com.auv.connected')
         await self.subscribe(self._handle_auv_connected, 'com.auv.update')
         loop = asyncio.get_event_loop()
-        asyncio.ensure_future(self._route_rpc_calls(), loop=loop)
+        asyncio.ensure_future(self._route_wamp_calls(), loop=loop)
 
-    async def _route_rpc_calls(self):
-        """Read messages off of the `auv.send` channel"""
+    async def _route_wamp_calls(self):
+        """Read messages from the channel layer and relay to the WAMP router
+
+        Supported channels:
+            wamp.rpc
+            wamp.publish
+
+        """
         while True:
-            _, data = channel_layer.receive_many([AUV_SEND_CHANNEL])
-            if data:
-                # if there is an `rpc` method defined we will
-                # call it and pass in any `data` args
-                if data.get('rpc'):
-                    self.call(data.get('rpc'), data.get('data'))
+            channel, data = channel_layer.receive_many([WAMP_RPC_CHANNEL,
+                                                        WAMP_PUBLISH_CHANNEL])
+            if channel == WAMP_RPC_CHANNEL:
+                if data.get('procedure'):
+                    self.call(data.get('procedure'), data.get('data'))
+                else:
+                    logger.error('Must define a `procedure` to call')
+
+            elif channel == WAMP_PUBLISH_CHANNEL:
+                if data.get('topic'):
+                    self.publish(data.get('topic'), data.get('data'))
+                logger.error('Must define a `topic` to publish to')
+
             asyncio.sleep(0.1)
 
     def _handle_auv_update(self, data):
-        """Log data to database"""
+        """Log AUV data to database"""
         auv_id = data.get('auv_id')
         self._update_last_seen(auv_id)
         serializer = AUVDataSerializer(data)
@@ -77,6 +93,13 @@ class RemoteInterface(ApplicationSession):
         """
         logger.info('Auv connected')
         self._update_last_seen(data.get('auv_id'))
+        # set the active trip if there is one
+        try:
+            active_trip = Trip.objects.get(active=True)
+        except Trip.DoesNotExist:
+            active_trip = None
+        data = TripSerializer(active_trip).data
+        self.call('com.auv.set_trip', data)
         # TODO
 
     def _update_last_seen(self, auv_id):

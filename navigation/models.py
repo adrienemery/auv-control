@@ -5,6 +5,8 @@ from auv.models import AUV
 
 class Trip(BaseModel):
     """Represents a series of Waypoints
+
+    Only one trip can be active at a time
     """
     auv = models.ForeignKey(AUV)
     name = models.CharField(max_length=255)
@@ -13,6 +15,20 @@ class Trip(BaseModel):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        # if this trip is active we need to make sure that no other
+        # trips are active and if we find one we set it to be
+        # inactive which ensures this trip is the only active trip
+        if self.active:
+            try:
+                active_trip = Trip.objects.get(active=True)
+            except Trip.DoesNotExist:
+                pass
+            else:
+                active_trip.active = False
+                active_trip.save()
+        super().save(*args, **kwargs)
 
 
 class Waypoint(BaseModel):

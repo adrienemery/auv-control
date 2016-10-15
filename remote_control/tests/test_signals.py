@@ -1,10 +1,14 @@
+import pytest
+
 from channels.tests import ChannelTestCase
 from django.contrib.auth.models import User
 
-from auv_control_api.asgi import AUV_SEND_CHANNEL
+from auv_control_api.constants import WAMP_RPC_CHANNEL
 from auv.models import AUV
 from navigation.models import Trip, Waypoint
-from navigation.serializers import WaypointSerializer
+from navigation.serializers import TripSerializer
+
+pytestmark = pytest.mark.django_db
 
 
 class TestChannels(ChannelTestCase):
@@ -19,10 +23,10 @@ class TestChannels(ChannelTestCase):
         trip.waypoints.add(waypoint)
         trip.active = True
         trip.save()
-        result = self.get_next_message(AUV_SEND_CHANNEL)
+        result = self.get_next_message(WAMP_RPC_CHANNEL)
         expected_data = {
-            'rpc': 'com.auv.start_trip',
-            'data': WaypointSerializer([waypoint], many=True).data
+            'procedure': 'com.auv.set_trip',
+            'data': TripSerializer(trip).data
         }
         self.assertDictEqual(result.content, expected_data)
 
@@ -31,5 +35,5 @@ class TestChannels(ChannelTestCase):
         trip = Trip.objects.create(auv=self.auv)
         trip.waypoints.add(waypoint)
         trip.save()
-        result = self.get_next_message(AUV_SEND_CHANNEL)
+        result = self.get_next_message(WAMP_RPC_CHANNEL)
         self.assertIsNone(result)
