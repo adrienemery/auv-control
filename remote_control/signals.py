@@ -17,6 +17,4 @@ def on_trip_post_save(sender, **kwargs):
             'procedure': 'com.auv.set_trip',
             'data': data
         }
-        print(data)
         Channel(WAMP_RPC_CHANNEL).send(content)
-

@@ -8,7 +8,7 @@ class Trip(BaseModel):
 
     Only one trip can be active at a time
     """
-    auv = models.ForeignKey(AUV)
+    auv = models.ForeignKey(AUV, related_name='trips')
     name = models.CharField(max_length=255)
     # only one trip can be active at a time
     active = models.BooleanField(blank=True, default=False)
@@ -46,16 +46,3 @@ class Waypoint(BaseModel):
 
     def str(self):
         return '{}, {}'.format(self.lat, self.lng)
-
-
-class Location(BaseModel):
-    """Store a location for a given AUV.
-
-    Query the latest based on timestamp to know the current location.
-    """
-    auv = models.ForeignKey(AUV)
-    trip = models.ForeignKey(Trip, null=True, blank=True)
-    lat = models.FloatField(null=True, blank=True)
-    lon = models.FloatField(null=True, blank=True)
-    timestamp = models.DateTimeField(blank=True, null=True)
-
