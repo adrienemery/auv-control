@@ -1,3 +1,4 @@
+channels>=0.17.1
 dj-database-url==0.4.1
 Django==1.10
 django-cors-headers==1.1.0
