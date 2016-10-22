@@ -2,9 +2,9 @@ import asyncio
 import logging
 
 from autobahn.asyncio.wamp import ApplicationSession
-from autobahn_autoreconnect import ApplicationRunner
 
 from django.contrib.auth.models import User
+from django.conf import settings
 from django.utils import timezone
 from knox.auth import AuthToken
 from rest_framework import exceptions
@@ -32,7 +32,7 @@ class RemoteInterface(ApplicationSession):
 
     def onConnect(self):
         logger.info('Connecting to {} as {}'.format(self.config.realm, 'backend'))
-        self.join(realm=self.config.realm, authmethods=['ticket'], authid='backend')
+        self.join(realm=settings.CROSSBAR_REALM, authmethods=['ticket'], authid='backend')
 
     def onChallenge(self, challenge):
         """Return authentication token when challenged by WAMP router"""
@@ -127,13 +127,3 @@ class RemoteInterface(ApplicationSession):
             return
         auv.last_seen = timezone.now()
         auv.save()
-
-
-if __name__ == '__main__':
-    import configparser
-    crossbar_config = configparser.ConfigParser()
-    crossbar_config.read('config.ini')
-    url = crossbar_config['crossbar']['url']
-    realm = crossbar_config['crossbar']['realm']
-    runner = ApplicationRunner(url=url, realm=realm)
-    runner.run(RemoteInterface)

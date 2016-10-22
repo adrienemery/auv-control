@@ -17,7 +17,6 @@ import dj_database_url
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
@@ -92,7 +91,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "asgi_redis.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("localhost", 6379)],
+            "hosts": [envitro.str('REDIS_URL', 'redis://localhost:6379')],
         },
         "ROUTING": "auv_control_api.routing.channel_routing",
     },
@@ -133,11 +132,19 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
 
-# DRF
+# Simplified static file serving.
+# https://warehouse.python.org/project/whitenoise/
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+
+# Django Rest Framework
+
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
@@ -154,7 +161,8 @@ REST_FRAMEWORK = {
 }
 
 
-# Knox
+# Knox Token Auth
+
 REST_KNOX = {
   'SECURE_HASH_ALGORITHM': 'cryptography.hazmat.primitives.hashes.SHA512',
   'AUTH_TOKEN_CHARACTER_LENGTH': 64,
@@ -162,5 +170,9 @@ REST_KNOX = {
   'USER_SERIALIZER': 'knox.serializers.UserSerializer',
 }
 
-# allow all CORS for now
+# Allow all CORS for now
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Crossbar settings
+CROSSBAR_URL = envitro.str('CROSSBAR_URL', 'ws://localhost:8080/ws')
+CROSSBAR_REALM = envitro.str('CROSSBAR_REALM', 'realm1')

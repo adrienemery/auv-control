@@ -17,17 +17,6 @@ class TripViewSet(AUVViewSetMixin,
         auv = self.get_auv()
         return Trip.objects.filter(auv=auv)
 
-    @detail_route(methods=['post'])
-    def select(self, request, pk=None, **kwargs):
-        trip = self.get_object()
-        waypoints = trip.waypoints.all()
-        data = WaypointSerializer(waypoints, many=True).data
-        content = {
-            'rpc': 'com.auv.set_trip',
-            'data': data
-        }
-        Channel('auv.send').send(content)
-
 
 class WayPointViewSet(AUVViewSetMixin,
                       viewsets.ModelViewSet):
