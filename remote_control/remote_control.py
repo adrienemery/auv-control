@@ -81,12 +81,13 @@ class RemoteInterface(ApplicationSession):
         """Log AUV data to database"""
         auv_id = data.get('auv_id')
         self._update_last_seen(auv_id)
-        serializer = AUVDataSerializer(data=data)
-        try:
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        except exceptions.ValidationError as exc:
-            logger.error(exc)
+        # TODO make way to toggle logging On/Off
+        # serializer = AUVDataSerializer(data=data)
+        # try:
+        #     serializer.is_valid(raise_exception=True)
+        #     serializer.save()
+        # except exceptions.ValidationError as exc:
+        #     logger.error(exc)
 
     def _handle_auv_connected(self, auv_id):
         """Updates the AUV with latest settings whenever it comes online
