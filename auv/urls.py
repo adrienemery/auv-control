@@ -8,8 +8,9 @@ router = DefaultRouter()
 router.register(r'auvs', AUVViewSet, base_name='auvs')
 
 auv_router = routers.NestedSimpleRouter(router, r'auvs', lookup='auv')
-# api/auvs/{auv_pk}/data
-auv_router.register(r'data', AUVDataViewSet, base_name='auv-data')
+
+# api/auvs/{auv_pk}/logs
+auv_router.register(r'logs', AUVDataViewSet, base_name='auv-logs')
 
 
 urlpatterns = (

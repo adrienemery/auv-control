@@ -1,6 +1,4 @@
-from channels import Channel
 from rest_framework import viewsets
-from rest_framework.decorators import detail_route
 
 from auv.views import AUVViewSetMixin
 

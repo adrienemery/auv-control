@@ -18,7 +18,7 @@ class AUV(BaseModel):
         (MOVE_TO_WAYPOINT, 'Move To Waypoint')
     )
 
-    owner = models.ForeignKey(User, blank=True, null=True)
+    owner = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     last_seen = models.DateTimeField(blank=True, null=True,
@@ -37,7 +37,7 @@ class AUV(BaseModel):
 
 class AUVData(BaseModel):
     """A log of all sensor data"""
-    auv = models.ForeignKey(AUV, blank=True, null=True)
+    auv = models.ForeignKey(AUV, blank=True, null=True, on_delete=models.CASCADE)
 
     # battery
     battery_percentage = models.FloatField(blank=True, null=True)

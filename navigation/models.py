@@ -8,7 +8,7 @@ class Trip(BaseModel):
 
     Only one trip can be active at a time
     """
-    auv = models.ForeignKey(AUV, related_name='trips')
+    auv = models.ForeignKey(AUV, related_name='trips', on_delete=models.CASCADE,)
     name = models.CharField(max_length=255)
     # only one trip can be active at a time
     active = models.BooleanField(blank=True, default=False)
@@ -36,8 +36,13 @@ class Waypoint(BaseModel):
 
     Multiple waypoints define a trip.
     """
-    trip = models.ForeignKey(Trip, blank=True, null=True,
-                             related_name='waypoints')
+    trip = models.ForeignKey(
+        Trip,
+        blank=True,
+        null=True,
+        related_name='waypoints',
+        on_delete=models.CASCADE,
+    )
     # trips with multiple waypoints must have an order to know which order
     # to move between the waypoints
     order = models.IntegerField(null=True, blank=True)

@@ -7,12 +7,11 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils import timezone
 from knox.auth import AuthToken
-from rest_framework import exceptions
 
 from auv_control_api.asgi import channel_layer
 from auv_control_api.constants import WAMP_RPC_CHANNEL, WAMP_PUBLISH_CHANNEL
 from auv.models import AUV
-from auv.serializers import AUVDataSerializer, AUVSettingsSerializer
+from auv.serializers import AUVSettingsSerializer
 from navigation.models import Trip
 from navigation.serializers import TripSerializer
 
@@ -27,7 +26,8 @@ class RemoteInterface(ApplicationSession):
         self.user, _ = User.objects.get_or_create(username='remote')
 
     def __del__(self):
-        """Clean up auth tokens"""
+        """Clean up auth tokens
+        """
         AuthToken.objects.filter(user=self.user).delete()
 
     def onConnect(self):
@@ -35,17 +35,19 @@ class RemoteInterface(ApplicationSession):
         self.join(realm=settings.CROSSBAR_REALM, authmethods=['ticket'], authid='backend')
 
     def onChallenge(self, challenge):
-        """Return authentication token when challenged by WAMP router"""
+        """Return authentication token when challenged by WAMP router
+        """
         if challenge.method == 'ticket':
             logger.info("WAMP-Ticket challenge received: {}".format(challenge))
-            # create a throw away token
+            # create a throw away token to authenticate ourselves to the wamp router
             auth_token = AuthToken.objects.create(user=self.user, expires=None)
             return auth_token
         else:
             raise Exception("Invalid authmethod {}".format(challenge.method))
 
     async def onJoin(self, details):
-        """Subscribe to topics and register RPC's"""
+        """Subscribe to topics and register RPC's
+        """
         logger.info("Joined Crossbar Session")
         await self.subscribe(self._handle_auv_connected, 'com.auv.connected')
         await self.subscribe(self._handle_auv_update, 'com.auv.update')
