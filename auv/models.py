@@ -1,3 +1,7 @@
+import hashlib
+import secrets
+import uuid
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -33,6 +37,21 @@ class AUV(BaseModel):
 
     def __str__(self):
         return self.name
+
+    @property
+    def auv_id(self):
+        """Use the first part of the UUID as the reference id
+        """
+        return str(self.id).split('-')[0]
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        # create an api token if none exists
+        try:
+            AUVToken.objects.get(auv=self)
+        except AUVToken.DoesNotExist:
+            AUVToken.objects.create(auv=self)
 
 
 class AUVData(BaseModel):
@@ -70,3 +89,34 @@ class AUVData(BaseModel):
     @classmethod
     def log(cls, auv, **data):
         return cls.objects.create(auv=auv, **data)
+
+
+class AUVTokenManager(models.Manager):
+
+    def create(self, auv):
+        token = secrets.token_hex(16)
+        token_hash_hex = hashlib.sha256(token.encode('ascii')).hexdigest()
+        super().create(auv=auv, token=token, token_hash=token_hash_hex)
+        # Note only the token - not the AUVTokenManager object - is returned
+        return token
+
+
+class AUVToken(BaseModel):
+
+    objects = AUVTokenManager()
+
+    auv = models.ForeignKey(AUV, on_delete=models.CASCADE,
+                            related_name='api_tokens')
+
+    # for now store token and hash in db for simplicity but eventually move
+    # to only storing the hash and only returing the unhashed token
+    # when it is created
+    token = models.CharField(max_length=255)
+    token_hash = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f'{self.auv}-{self.token_hash}'
+
+    @staticmethod
+    def hash_token(token):
+        return hashlib.sha256(token.encode('ascii')).hexdigest()

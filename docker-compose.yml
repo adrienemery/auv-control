@@ -6,7 +6,7 @@ services:
     image: crossbario/crossbar
     restart: always
     ports:
-      - "8090:8080"
+      - "8080:8080"
 
   db:
     image: postgres
@@ -17,7 +17,6 @@ services:
       - "8000:8000"
     links:
       - db
-      - crossbar
     restart: always
     environment:
       - DEBUG=True

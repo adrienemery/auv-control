@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'knox',
+    'djoser',
+    'auv_control_api',
     'authenticator',
     'auv',
     'navigation',
@@ -153,6 +155,17 @@ REST_KNOX = {
   'AUTH_TOKEN_CHARACTER_LENGTH': 64,
   'TOKEN_TTL': None,
   'USER_SERIALIZER': 'knox.serializers.UserSerializer',
+}
+
+DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SERIALIZERS': {},
+    'TOKEN_MODEL': 'knox.models.AuthToken',
+    'SERIALIZERS': {
+        'user': 'auv_control_api.serializers.UserSerializer'
+    }
 }
 
 # Allow all CORS for now

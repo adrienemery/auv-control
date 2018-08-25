@@ -4,6 +4,7 @@ Django==2.1
 django-cors-headers==2.4.0
 djangorestframework==3.8.2
 django-rest-knox==3.1.5
+djoser
 drf-nested-routers==0.11.1
 envitro==0.4.2
 gunicorn==19.6.0

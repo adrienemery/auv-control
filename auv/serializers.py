@@ -1,26 +1,29 @@
 from rest_framework import serializers
 
-from navigation.models import Trip
-from navigation.serializers import TripSerializer
+from auv_control_api import settings
 from .models import AUV, AUVData
 
 
 class AUVSerializer(serializers.ModelSerializer):
 
-    active_trip = serializers.SerializerMethodField()
+    wamp_url = serializers.SerializerMethodField()
+    wamp_realm = serializers.SerializerMethodField()
+    api_token = serializers.SerializerMethodField()
 
     class Meta:
         model = AUV
-        fields = '__all__'
+        fields = ('name', 'description', 'last_seen', 'update_frequency',
+                  'auv_id', 'wamp_url', 'wamp_realm', 'api_token')
         read_only = ('id',)
 
-    def get_active_trip(self, auv):
-        try:
-            trip = Trip.objects.get(auv=auv, active=True)
-        except Trip.DoesNotExist:
-            return None
-        else:
-            return TripSerializer(trip).data
+    def get_wamp_url(self, intance):
+        return settings.CROSSBAR_URL
+
+    def get_wamp_realm(self, intance):
+        return settings.CROSSBAR_REALM
+
+    def get_api_token(self, instance):
+        return instance.api_tokens.all().first().token
 
 
 class AUVSettingsSerializer(serializers.ModelSerializer):

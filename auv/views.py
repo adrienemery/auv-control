@@ -18,7 +18,7 @@ class AUVPermission(BasePermission):
         try:
             AUV.objects.get(id=auv_id, owner=request.user)
         except AUV.DoesNotExist:
-            logger.warn('User attempted to access an AUV they do no own')
+            logger.warning('User attempted to access an AUV they do no own')
             return False
         return True
 

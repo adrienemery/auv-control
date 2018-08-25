@@ -23,6 +23,8 @@ urlpatterns = [
     url(r'^status/', Status.as_view()),
     url(r'^api/auth/', include('knox.urls')),
     url(r'^api/auth/', include('authenticator.urls')),
+    url(r'^api/', include('djoser.urls.base')),
+    url(r'^api/auth/', include('djoser.urls.authtoken')),
     url(r'^api/', include('auv.urls')),
     url(r'^api/', include('navigation.urls')),
 ]
