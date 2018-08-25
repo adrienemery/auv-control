@@ -8,8 +8,6 @@ from django.conf import settings
 from django.utils import timezone
 from knox.auth import AuthToken
 
-from auv_control_api.asgi import channel_layer
-from auv_control_api.constants import WAMP_RPC_CHANNEL, WAMP_PUBLISH_CHANNEL
 from auv.models import AUV
 from auv.serializers import AUVSettingsSerializer
 from navigation.models import Trip
@@ -53,31 +51,6 @@ class RemoteInterface(ApplicationSession):
         await self.subscribe(self._handle_auv_update, 'com.auv.update')
         loop = asyncio.get_event_loop()
         asyncio.ensure_future(self._route_wamp_calls(), loop=loop)
-
-    async def _route_wamp_calls(self):
-        """Read messages from the channel layer and relay to the WAMP router
-
-        Supported channels:
-            wamp.rpc
-            wamp.publish
-
-        """
-        while True:
-            channel, data = channel_layer.receive_many([WAMP_RPC_CHANNEL,
-                                                        WAMP_PUBLISH_CHANNEL])
-            if channel == WAMP_RPC_CHANNEL:
-                if data.get('procedure'):
-                    self.call(data.get('procedure'), data.get('data'))
-                else:
-                    logger.error('Must define a `procedure` to call')
-
-            elif channel == WAMP_PUBLISH_CHANNEL:
-                if data.get('topic'):
-                    self.publish(data.get('topic'), data.get('data'))
-                else:
-                    logger.error('Must define a `topic` to publish to')
-
-            await asyncio.sleep(0.01)
 
     def _handle_auv_update(self, data):
         """Log AUV data to database"""
