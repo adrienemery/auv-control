@@ -28,6 +28,10 @@ DEBUG = envitro.bool('DEBUG', False)
 
 ALLOWED_HOSTS = ['*']
 
+CORS_ORIGIN_WHITELIST = (
+    'localhost:8080',
+)
+
 
 # Application definition
 
@@ -162,7 +166,6 @@ DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
-    'SERIALIZERS': {},
     'TOKEN_MODEL': 'knox.models.AuthToken',
     'SERIALIZERS': {
         'user': 'auv_control_api.serializers.UserSerializer'
